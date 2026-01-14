@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Jump Game</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; overflow: hidden; }
+        #gameCanvas {
+            border: 2px solid #333;
+            background-color: #f0f0f0;
+            display: block;
+            margin: 20px auto;
+        }
+        h1 { color: #333; }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+
+    <h1>Jump & Survive</h1>
+    <p>Drücke <b>Leertaste</b> zum Springen. Bei max. Speed kommen 3 Hindernisse hintereinander!</p>
+    <canvas id="gameCanvas" width="800" height="200"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Spiel-Variablen
+        let score = 0;
+        let gameActive = true;
+
+        // Spieler-Objekt
+        let player = {
+            x: 50,
+            y: 150,
+            width: 30,
+            height: 30,
+            dy: 0,
+            jumpForce: 12,
+            gravity: 0.6,
+            grounded: false
+        };
+
+        // Hindernis-Array
+        let obstacles = [];
+        let obstacleTimer = 0;
+
+        function drawPlayer() {
+            ctx.fillStyle = "#FF5733"; // Orange
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        function drawObstacles() {
+            ctx.fillStyle = "#333";
+            obstacles.forEach((obs, index) => {
+                obs.x -= 5; // Geschwindigkeit der Hindernisse
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+
+                // Kollisionserkennung
+                if (
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y
+                ) {
+                    gameOver();
+                }
+
+                // Entferne Hindernisse, die links aus dem Bild sind
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(index, 1);
+                    score++;
+                }
+            });
+        }
+
+        function update() {
+            if (!gameActive) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Gravitation und Bewegung
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            // Boden-Check
+            if (player.y + player.height > canvas.height) {
+                player.y = canvas.height - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+
+            // Hindernisse spawnen (ca. alle 1.5 - 2 Sekunden)
+            obstacleTimer++;
+            if (obstacleTimer % 100 === 0) {
+                obstacles.push({
+                    x: canvas.width,
+                    y: 160,
+                    width: 20,
+                    height: 40
+                });
+            }
+
+            drawPlayer();
+            drawObstacles();
+
+            // Score anzeigen
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 20, 30);
+
+            requestAnimationFrame(update);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            alert("Game Over! Dein Score: " + score);
+            location.reload(); // Startet das Spiel neu
+        }
+
+        // Steuerung
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space" && player.grounded) {
+                player.dy = -player.jumpForce;
+            }
+        });
+
+        update();
+    </script>
+</body>
+</html>
