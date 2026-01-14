@@ -2,552 +2,212 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BE A RACER</title>
+    <title>Jump & Survive - Pro Version</title>
     <style>
-        :root {
-            --red: #ff0000;
-            --white: #ffffff;
-            --black: #000000;
-            --gray: #0a0a0a;
+        body { 
+            text-align: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--black);
-            color: var(--white);
-            font-family: 'Arial Black', sans-serif;
-            overflow-x: hidden;
+        #gameCanvas {
+            border: 3px solid #fff;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
         }
-
-        /* Hintergrund-Look */
-        .bg-watermark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-10deg);
-            font-size: 20vw;
-            color: rgba(255, 255, 255, 0.02);
-            z-index: -1;
-            white-space: nowrap;
-            pointer-events: none;
-        }
-
-        /* Die einzige Sektion auf der Seite */
-        #main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 80px 40px;
-        }
-
-        header {
-            margin-bottom: 80px;
-            border-left: 12px solid var(--red);
-            padding-left: 20px;
-        }
-
-        h1 {
-            font-size: 6rem;
-            text-transform: uppercase;
-            font-style: italic;
-            line-height: 0.8;
-            letter-spacing: -4px;
-        }
-
-        h1 span { color: var(--red); }
-
-        /* Das Grid mit den 3 Rollern */
-        .scooter-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .arguments-section {
-            margin: 80px 0;
-            padding: 50px;
-            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
-            border: 1px solid #222;
-            border-radius: 4px;
-        }
-
-        .arguments-section h2 {
-            color: var(--red);
+        h1 { 
+            color: #fff; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             font-size: 2.5rem;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            font-style: italic;
-            text-align: center;
-        }
-
-        .arguments-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-        }
-
-        .argument-card {
-            background: #111;
-            padding: 25px;
-            border-left: 5px solid var(--red);
-            border-radius: 3px;
-        }
-
-        .argument-card h3 {
-            color: var(--red);
-            text-transform: uppercase;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            font-weight: 900;
-        }
-
-        .argument-card p {
-            color: #ccc;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        @media (max-width: 900px) {
-            .arguments-grid { grid-template-columns: 1fr; }
-        }
-
-        footer {
-            background: #000;
-            border-top: 1px solid #222;
-            padding: 40px;
-            margin-top: 80px;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: #888;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--red);
-        }
-
-        .footer-text {
-            color: #666;
-            font-size: 0.85rem;
-            line-height: 1.6;
             margin-bottom: 10px;
         }
-
-        .footer-disclaimer {
-            color: #555;
-            font-size: 0.8rem;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #222;
-        }
-
-        .scooter-card {
-            background: var(--gray);
-            height: 650px;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .scooter-card:hover { transform: scale(0.98); }
-
-        .scooter-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.6);
-            transition: 0.5s;
-        }
-
-        .scooter-card:hover img { filter: brightness(1); transform: scale(1.1); }
-
-        .card-title {
-            position: absolute;
-            bottom: 30px;
-            left: 25px;
-            font-size: 2.5rem;
-            font-style: italic;
-            text-transform: uppercase;
-        }
-
-        /* Detail Overlay */
-        #detail-view {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--black);
-            z-index: 1000;
-            display: none;
-            padding: 50px;
-            overflow-y: auto;
-        }
-
-        #detail-view.active { display: block; }
-
-        .btn-back {
-            background: var(--red);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-weight: 900;
-            cursor: pointer;
-            margin-bottom: 40px;
-        }
-
-        .detail-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .detail-img img { width: 100%; border-bottom: 15px solid var(--red); }
-
-        .detail-content h2 { font-size: 4rem; text-transform: uppercase; font-style: italic; margin-bottom: 20px; }
-
-        .spec-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid #222;
-        }
-
-        .spec-label { color: #666; text-transform: uppercase; font-size: 0.8rem; }
-        .spec-value { font-weight: bold; }
-
-        .maintenance-box {
-            margin-top: 40px;
-            padding: 25px;
-            background: #111;
-            border-left: 4px solid var(--red);
-        }
-
-        .price-box {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-            padding: 20px;
-            border: 2px solid var(--red);
-            margin-bottom: 30px;
-            border-radius: 4px;
-        }
-
-        .price-box h3 {
-            color: var(--red);
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .price-box p {
-            color: #bbb;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .guide-section {
-            margin: 30px 0;
-        }
-
-        .guide-category {
-            background: #0d0d0d;
-            border: 1px solid #222;
-            margin-bottom: 15px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .guide-category-title {
-            background: var(--red);
-            color: white;
-            padding: 12px 15px;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .guide-category-title:hover {
-            background: #ff2222;
-        }
-
-        .guide-category-content {
-            padding: 15px;
-            display: none;
-        }
-
-        .guide-category-content.open {
-            display: block;
-        }
-
-        .guide-category-content ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .guide-category-content li {
-            color: #ccc;
-            padding: 8px 0;
-            border-bottom: 1px solid #222;
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-
-        .guide-category-content li:last-child {
-            border-bottom: none;
-        }
-
-        .guide-category-content li:before {
-            content: "✓ ";
-            color: var(--red);
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        @media (max-width: 900px) {
-            .scooter-grid, .detail-layout { grid-template-columns: 1fr; }
-            h1 { font-size: 3rem; }
+        p { 
+            color: #fff; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-watermark">RACING</div>
-
-    <div id="main-container">
-        <header>
-            <h1>BE A <span>RACER.</span></h1>
-        </header>
-
-        <div class="scooter-grid">
-            <div class="scooter-card" onclick="openInfo('sf2')">
-                <img src="19c7c7d4fae8666dfbfccdb2ca0c2c3b.jpg">
-                <div class="card-title">Speedfight 2</div>
-            </div>
-            <div class="scooter-card" onclick="openInfo('aerox')">
-                <img src="15687632-9d2c-49e5-9d63-23ac6e13ee5a.avif">
-                <div class="card-title">Aerox R</div>
-            </div>
-            <div class="scooter-card" onclick="openInfo('jetforce')">
-                <img src="photo-81403-58ed70ba.jpg">
-                <div class="card-title">Jetforce</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="arguments-section">
-        <h2>Warum ein Roller?</h2>
-        <div class="arguments-grid">
-            <div class="argument-card">
-                <h3>🚗 Mobilität & Unabhängigkeit</h3>
-                <p>Mit 16 Jahren zur Schule fahren, ohne auf Bus-Fahrpläne zu warten. Freunde treffen, Unterricht nicht verpassen – echte Selbstständigkeit, die die Zukunft prägt.</p>
-            </div>
-            <div class="argument-card">
-                <h3>💰 Günstig in Betrieb</h3>
-                <p>Spritverbrauch: nur 2-3 Liter auf 100 km (~4-5€/Monat). Versicherung ab 50€/Jahr. Auto kostet das 10x mehr. Beste Kosten-Nutzen Relation.</p>
-            </div>
-            <div class="argument-card">
-                <h3>✅ Verkehrserziehung</h3>
-                <p>Roller fahren lehrt Verantwortung, Verhalten im Straßenverkehr und Gefahrenbewusstsein – besser als jeder Verkehrsunterricht. Prüfung vor der Führerschein ist intensiv.</p>
-            </div>
-            <div class="argument-card">
-                <h3>🛡️ Sicherheit als Standard</h3>
-                <p>Im Gegensatz zu Fahrrädern: Helm ist gesetzlich Pflicht, moderne Bremsen (Brembo), Beleuchtung. Alle Modelle erfüllen Euro-Normen + TÜV.</p>
-            </div>
-            <div class="argument-card">
-                <h3>🔧 Lerne Selbstverantwortung</h3>
-                <p>Regelmäßige Wartung, Ölwechsel, TÜV-Termine verstehen – das schult Verantwortungsbewusstsein für später (Auto, Beruf, Freizeit).</p>
-            </div>
-            <div class="argument-card">
-                <h3>⏱️ Zeitersparnis im Alltag</h3>
-                <p>15 Minuten Schulweg statt 45 Minuten Bus. Die gewonnene Zeit für Hobbys, Sport, Freunde oder Lernen nutzen. Produktivität steigt.</p>
-            </div>
-            <div class="argument-card">
-                <h3>🏆 Wertstabil & Wiederverkauf</h3>
-                <p>Ein gut erhaltener Roller behält seinen Wert. Falls du später nicht mehr fahren möchtest: Verkauf ohne großen Verlust möglich.</p>
-            </div>
-            <div class="argument-card">
-                <h3>⚙️ Einstieg in Motorrad-Kultur</h3>
-                <p>Roller ist perfekter Einstieg in Fahrzeug-Technik. Mit 18 Jahren einfacher auf größere Motorräder umsteigen – erfahren & sicher.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="detail-view">
-        <button class="btn-back" onclick="closeInfo()">← BACK</button>
-        <div class="detail-layout">
-            <div class="detail-img">
-                <img id="d-img" src="">
-            </div>
-            <div class="detail-content">
-                <h2 id="d-title">TITLE</h2>
-                <div class="price-box" id="d-price"></div>
-                <div id="d-specs"></div>
-                
-                <div class="guide-section" id="d-guide"></div>
-                
-                <div class="maintenance-box">
-                    <h3 style="color:var(--red); margin-bottom:10px;">2-TAKT PFLEGE & BETRIEB</h3>
-                    <p style="font-size: 0.9rem; line-height: 1.5; color: #ccc;">
-                        • <b>Motoröl:</b> Immer hochwertiges Vollsynthetiköl im Öltank nutzen – ohne Öl droht Kolbenfresser.<br>
-                        • <b>Kaltlauf:</b> Motor 1-2 Min. warmlaufen lassen vor Vollgas.<br>
-                        • <b>Zündkerze & Luftfilter:</b> Regelmäßig austauschen (etwa jährlich).<br>
-                        • <b>Wartung:</b> TÜV + HU nicht vergessen – sonst keine Versicherung!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#impressum">Impressum</a>
-                <a href="#datenschutz">Datenschutz</a>
-                <a href="#haftung">Haftungsausschluss</a>
-            </div>
-
-            <div class="footer-text">
-                <strong>Kontakt & Verantwortung</strong><br>
-                Diese Website ist ein privates Projekt zur Rollerberatung.<br>
-                Fragen oder Feedback: <a href="mailto:info@rollerberatung.de" style="color: var(--red); text-decoration: none;">info@rollerberatung.de</a><br>
-                Erhältlich über Eltern/Schule
-            </div>
-
-            <div class="footer-text">
-                <strong>Datenschutz</strong><br>
-                Diese Website speichert keine Daten. Es erfolgt keine Analyse, Tracking oder Cookies.<br>
-                Deine Privatsphäre ist geschützt.
-            </div>
-
-            <div class="footer-text">
-                <strong>Haftungsausschluss</strong><br>
-                Die Informationen auf dieser Website basieren auf allgemeinen Kenntnissen und sind ohne Gewähr.<br>
-                Beim Rollerkauf: Fachmann/Werkstatt vor Ort konsultieren.<br>
-                Alle Preise sind Richtwerte und können variieren.
-            </div>
-
-            <div class="footer-disclaimer">
-                © 2026 BE A RACER | Rollerberatung für Schüler | Nicht kommerziell<br>
-                <span style="font-size: 0.8rem; color: #555; margin-top: 10px; display: block;">Website erstellt von Karim Atlagh</span>
-            </div>
-        </div>
-    </footer>
+    <h1>Jump & Survive</h1>
+    <p>Drücke <b>Leertaste</b> zum Springen. Bei max. Speed kommen 3 Hindernisse hintereinander!</p>
+    <canvas id="gameCanvas" width="800" height="200"></canvas>
 
     <script>
-        const data = {
-            sf2: {
-                title: "Speedfight 2",
-                img: "19c7c7d4fae8666dfbfccdb2ca0c2c3b.jpg",
-                specs: [["Motor", "2-Takt Einzylinder"], ["Kühlung", "Luft/Wasser"], ["Bremse", "Scheibe Vorne"], ["Gewicht", "95 kg"]],
-                price: "400 - 800€",
-                priceNote: "(Marktüblich für 50ccm, je nach Zustand/Baujahr)",
-                buyGuide: [
-                    { title: "Papiere & Legalität", items: ["Fahrzeugbrief + Fahrzeugschein vorhanden?", "Letzte TÜV-Hauptuntersuchung nicht älter als 2 Jahre", "Versicherungskennzeichen verfügbar (Haftpflicht 50€/Jahr)", "Keine offenen Mängel im TÜV-Bericht"] },
-                    { title: "Motor-Check vor Ort", items: ["Kalt-Start-Test: Motor muss zuverlässig anspringen", "Kein Ölauslauf aus Motor oder Getriebe", "Auspuff: kein schwarz-ölige Rußablagerung", "Drehzahlen sind stabil ohne zu schwanken"] },
-                    { title: "Fahrwerk & Sicherheit", items: ["Reifen: Mindestprofil 1,6mm (mit Cent-Münze prüfen)", "Bremsbeläge: noch mind. 1-2mm Dicke", "Bremshebel: straff, nicht wackelig", "Rahmen: keine Risse oder Beulen"] },
-                    { title: "Wartungshistorie", items: ["Letzte Ölwechsel dokumentiert?", "Luftfilter & Zündkerze getauscht?", "Kette/Zahnriemen gepflegt?", "Regelmäßige Inspektionen nachweisbar?"] },
-                    { title: "Rote Flaggen (Nicht kaufen!)", items: ["Motor läuft rau oder wird extrem heiß", "Getriebe schaltet nicht ordnungsgemäß", "Starke Korrosion oder durchgerostete Teile", "Papiere fehlend oder nicht lesbar"] }
-                ]
-            },
-            aerox: {
-                title: "Aerox R",
-                img: "15687632-9d2c-49e5-9d63-23ac6e13ee5a.avif",
-                specs: [["Motor", "Minarelli 2-Takt"], ["Kühlung", "Flüssigkeit"], ["Bremse", "Brembo"], ["Gewicht", "97 kg"]],
-                price: "600 - 1.200€",
-                priceNote: "(Premium-Segment: beste Wertstabilität)",
-                buyGuide: [
-                    { title: "Papiere & Legalität", items: ["Fahrzeugbrief + Fahrzeugschein vorhanden?", "TÜV aktuell (grüne Plakette sichtbar)", "Registriert auf Verkäufer/Käufer", "Keine Unfallschäden im Fahrzeugschein eingetragen"] },
-                    { title: "Motor-Check vor Ort", items: ["Flüssigkeitskühlkreislauf: kein Undichtheit", "Kühlflüssigkeit sollte sauber sein (nicht grün/braun)", "Minarelli-Motor läuft ruhig und stabil", "Drosselklappe antwortet sofort"] },
-                    { title: "Brembo-Bremsanlage (Qualitätsmerkmal)", items: ["Beide Bremshebel müssen fest anliegen", "Bremsflüssigkeit nicht älter als 2 Jahre", "Bremsbeläge vorne/hinten: min. 2mm", "Keine Luft in der Bremsleitung (Test: festes Gefühl)"] },
-                    { title: "Variomatik & Getriebe", items: ["Riemen muss unverrissen sein", "Getriebe schaltet ohne Verzögerung", "Kein quietschendes Geräusch beim Beschleunigen", "Öl im Getriebe klar (nicht schwarz)"] },
-                    { title: "Wertstabilität prüfen", items: ["Kilometerstand sollte unter 20.000 km liegen", "Keine Unfallschäden oder Reparaturlacke", "Originale Lackierung bevorzugt", "Service-Hefte/Wartungsnachweise wichtig"] }
-                ]
-            },
-            jetforce: {
-                title: "Jetforce",
-                img: "photo-81403-58ed70ba.jpg",
-                specs: [["Motor", "2-Takt C-Tech"], ["Rahmen", "Perimeter-Stahl"], ["Gewicht", "106 kg"], ["Fahrwerk", "Zentral-Federbein"]],
-                price: "700 - 1.400€",
-                priceNote: "(Sicherheits-Premium: stabilster Rahmen)",
-                buyGuide: [
-                    { title: "Papiere & Legalität", items: ["Vollständige Papiere vorhanden", "TÜV nicht älter als 2 Jahre", "Registrierter Halter mit aktueller Adresse", "Versicherungsbestätigung für aktuelles Jahr"] },
-                    { title: "Rahmen & Sicherheit (Kernstärke)", items: ["Perimeter-Stahlrahmen: keine Dellen/Risse", "Schweißnähte sollten sauber und glatt sein", "Rahmen-Nummer mit Fahrzeugschein abgleichen", "Zentral-Federbein: keine Verschleißspuren"] },
-                    { title: "Motor & Mechanik", items: ["C-Tech-Motor muss sanft laufen", "Kein Öl-Kondensat im Luft filter", "Auspuff ohne tiefe Roststellen", "Alle beweglichen Teile spielfrei"] },
-                    { title: "Fahrwerk & Bremsen", items: ["Bremsanlage (Shuricane): beide Bremsen funktionieren", "Felgen: keine Speichenrisse", "Gabelöl: kein Austritt an den Dichtungen", "Lenkung sollte leichtgängig sein"] },
-                    { title: "Stabilität & Balance Test", items: ["Roller sollte auf ebener Fläche von alleine stehen", "Keine Schwachstellen beim Geradeausfahren", "Bei Kurven: stabile Schräglage ohne wackeln", "Lenkverhalten sollte direkt antworten"] }
-                ]
-            }
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Spiel-Variablen
+        let score = 0;
+        let gameActive = true;
+        let gameSpeed = 5; // Startgeschwindigkeit
+        let maxSpeed = 15; // Maximale Geschwindigkeit
+        let frameCount = 0;
+
+        // Spieler-Objekt
+        let player = {
+            x: 50,
+            y: 150,
+            width: 30,
+            height: 30,
+            dy: 0,
+            jumpForce: 12,
+            gravity: 0.6,
+            grounded: false
         };
 
-        function openInfo(id) {
-            const s = data[id];
-            document.getElementById('d-title').innerText = s.title;
-            document.getElementById('d-img').src = s.img;
+        // Hindernis-Array
+        let obstacles = [];
+        let obstacleTimer = 0;
+
+        function drawPlayer() {
+            // Spieler-Schatten
+            ctx.fillStyle = "rgba(0,0,0,0.2)";
+            ctx.fillRect(player.x - 2, player.y + player.height - 2, player.width + 4, 4);
             
-            // Specs anzeigen
-            let specHtml = "";
-            s.specs.forEach(x => { 
-                specHtml += `<div class="spec-item"><span class="spec-label">${x[0]}</span><span>${x[1]}</span></div>`; 
-            });
-            document.getElementById('d-specs').innerHTML = specHtml;
+            // Spieler-Hauptkörper mit Gradient
+            let gradient = ctx.createLinearGradient(player.x, player.y, player.x, player.y + player.height);
+            gradient.addColorStop(0, "#FF6B35");
+            gradient.addColorStop(1, "#FF5733");
+            ctx.fillStyle = gradient;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
             
-            // Preis anzeigen
-            let priceHtml = `<h3>Marktpreis</h3><p><strong>${s.price}</strong></p><p style="font-size: 0.85rem; color: #999; margin-top: 8px;">${s.priceNote}</p>`;
-            document.getElementById('d-price').innerHTML = priceHtml;
+            // Spieler-Augen
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(player.x + 8, player.y + 8, 4, 4);
+            ctx.fillRect(player.x + 18, player.y + 8, 4, 4);
             
-            // Kaufberatung anzeigen
-            let guideHtml = "<h3 style='color: var(--red); margin-bottom: 15px; text-transform: uppercase; font-size: 1.2rem;'>KAUFBERATUNG – Was Sie prüfen sollten</h3>";
-            s.buyGuide.forEach((section, idx) => {
-                guideHtml += `<div class="guide-category">
-                    <div class="guide-category-title" onclick="toggleGuide(this)">
-                        ${section.title}
-                        <span>▼</span>
-                    </div>
-                    <div class="guide-category-content">
-                        <ul>
-                            ${section.items.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('d-guide').innerHTML = guideHtml;
-            
-            document.getElementById('detail-view').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Spieler-Pupillen
+            ctx.fillStyle = "#000";
+            ctx.fillRect(player.x + 9, player.y + 9, 2, 2);
+            ctx.fillRect(player.x + 19, player.y + 9, 2, 2);
         }
 
-        function toggleGuide(element) {
-            const content = element.nextElementSibling;
-            content.classList.toggle('open');
-            const arrow = element.querySelector('span');
-            arrow.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
-            arrow.style.transition = 'transform 0.2s ease';
+        function drawObstacles() {
+            obstacles.forEach((obs, index) => {
+                obs.x -= gameSpeed; // Dynamische Geschwindigkeit
+                
+                // Hindernis-Schatten
+                ctx.fillStyle = "rgba(0,0,0,0.3)";
+                ctx.fillRect(obs.x - 2, obs.y - 2, obs.width + 4, obs.height + 4);
+                
+                // Hindernis-Hauptkörper mit Gradient
+                let gradient = ctx.createLinearGradient(obs.x, obs.y, obs.x + obs.width, obs.y);
+                gradient.addColorStop(0, "#4a4a4a");
+                gradient.addColorStop(1, "#2c2c2c");
+                ctx.fillStyle = gradient;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                
+                // Hindernis-Highlight
+                ctx.fillStyle = "rgba(255,255,255,0.1)";
+                ctx.fillRect(obs.x + 2, obs.y + 2, obs.width - 4, 2);
+
+                // Kollisionserkennung
+                if (
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y
+                ) {
+                    gameOver();
+                }
+
+                // Entferne Hindernisse, die links aus dem Bild sind
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(index, 1);
+                    score++;
+                }
+            });
         }
 
-        function closeInfo() {
-            document.getElementById('detail-view').classList.remove('active');
-            document.body.style.overflow = 'auto';
+        function update() {
+            if (!gameActive) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            frameCount++;
+
+            // --- SCHWIERIGKEIT ERHÖHEN ---
+            // Alle 400 Frames wird das Spiel etwas schneller bis zum Maximum
+            if (frameCount % 400 === 0 && gameSpeed < maxSpeed) {
+                gameSpeed += 0.8;
+            }
+
+            // Gravitation und Bewegung
+            player.dy += player.gravity;
+            player.y += player.dy;
+
+            // Boden-Check
+            if (player.y + player.height > canvas.height) {
+                player.y = canvas.height - player.height;
+                player.dy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+
+            // Hindernisse spawnen - erst bei maximaler Geschwindigkeit kommen 3 Hindernisse hintereinander
+            obstacleTimer++;
+            let spawnRate = Math.max(25, Math.floor(120 - gameSpeed * 4));
+            
+            if (obstacleTimer % spawnRate === 0) {
+                let h = 20 + Math.random() * 40; // Zufällige Höhe zwischen 20-60px
+                
+                // Nur bei maximaler Geschwindigkeit kommen 3 Hindernisse hintereinander
+                if (gameSpeed >= maxSpeed) {
+                    for (let i = 0; i < 3; i++) {
+                        obstacles.push({
+                            x: canvas.width + (i * 80), // 80px Abstand zwischen Hindernissen
+                            y: canvas.height - h,
+                            width: 20,
+                            height: h
+                        });
+                    }
+                } else {
+                    // Normal: nur ein Hindernis
+                    obstacles.push({
+                        x: canvas.width,
+                        y: canvas.height - h,
+                        width: 20,
+                        height: h
+                    });
+                }
+            }
+
+            drawPlayer();
+            drawObstacles();
+
+            // Score und Speed anzeigen mit schönerem Design
+            ctx.fillStyle = "rgba(255,255,255,0.9)";
+            ctx.fillRect(10, 10, 200, 70);
+            
+            ctx.fillStyle = "#333";
+            ctx.font = "bold 20px 'Segoe UI'";
+            ctx.fillText("Score: " + score, 20, 35);
+            ctx.fillText("Speed: " + gameSpeed.toFixed(1) + "/" + maxSpeed, 20, 65);
+
+            requestAnimationFrame(update);
         }
+
+        function gameOver() {
+            gameActive = false;
+            alert("Game Over! Dein Score: " + score);
+            location.reload(); // Startet das Spiel neu
+        }
+
+        // Steuerung
+        window.addEventListener("keydown", (e) => {
+            if (e.code === "Space" && player.grounded) {
+                player.dy = -player.jumpForce;
+            }
+        });
+
+        update();
     </script>
 </body>
 </html>
